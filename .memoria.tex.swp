@@ -1,0 +1,187 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
+\usepackage{amsmath, amsthm, amsfonts}
+\usepackage{graphicx}
+\setlength{\marginparwidth}{2cm}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{multicol}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{parskip}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{listings}
+
+
+\title{Memoria de proyecto}
+\author{
+    \begin{minipage}{0.5\textwidth}
+    \centering
+    Hugo Herrador Segade\\
+    \small h.herrador@udc.es\\
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+    \centering
+    Pablo Montes Aldao\\
+    \small pablo.montes1@udc.es\\
+    \end{minipage}
+}
+\date{3 de mayo de 2024}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Introducción}
+El presente documento representa la memoria de la cuarta práctica de la asignatura Fundamentos de Programación II (GCED-FP2 614G020092324), desarrollada por Hugo Herrador Segade y Pablo Montes Aldao entre los días 22 de abril de 2024 y 3 de mayo del mismo año.
+
+El programa Python desarrollado pretende abordar la gestión del catálogo de cursos de dos academias de idiomas, permitiendo generar un catálogo de ``oferta agregada'' y otro de oferta común, además de mostrar estadísticas sobre las academias (utilizando la librería pandas).
+
+El programa funciona haciendo uso del TAD AVL, cuyo código se incluye en el directorio AVL.
+
+\section{Guía al usuario}
+
+El programa está diseñado para ser utilizado de forma sencilla y trata de acompañar al usuario a través de los menús para que obtenga lo que desea.
+
+\subsection{Requerimientos}
+
+Para ejecutar el programa se requiere:
+
+\begin{itemize}
+
+\item{Un ordenador con un intérprete de Python (programa encargado de interpretar y ejecutar el código) instalado, versión 3.7 o más reciente}
+
+\item{Un gestor de paquetes y los paquetes indicados en el archivo requirements.txt}
+
+\end{itemize}
+
+\subsection{Mecanismo de ejecución del programa}
+En primer lugar, es importante señalar que tanto los archivos de código fuente (main.py, manager.py course.py) como los archivos de código del TAD AVL deben encontrarse en la misma carpeta, sin directorios anidados. 
+
+Para ejecutar el programa el usuario deberá llamar a main.py a través del intérprete de Python. En Linux, se puede hacer abriendo una terminal y ejecutando:
+
+\begin{lstlisting}
+
+python3 main.py
+
+\end{lstlisting}
+
+Al ejecutar el programa, se crea un objeto de clase Manager sobre el que se aplica el método self.launch(). Al ejecutarse esté método, al usuario se le dará la opción de leer dos archivos de texto con datos de academias. Estes deben estar en el mismo formato que los ejemplos ejA.txt y ejB.txt. En caso contrario, se imprimirá un mensaje de error y se cerrará el programa.
+
+Es importante resaltar que los ficheros a leer también se deben encontrar en el mismo directorio que los archivos de código Python. Alternativamente, se puede indicar como nombre de fichero la ruta al mismo.
+
+Una vez leído el archivo, se crearán objetos de clase Course y se almacenarán en árbol AVL, que será un atributo de la clase Manager (academy\_a o academy\_b, según corresponda).
+
+Después se llama al método self.main\_menu(), que es el que gestiona el menú principal. Ahí dependiendo del input del usuario se llama a un método u otro para gestionar su petición. Después de satisfacerla, se vuelve a llamar a self.back\_main() para volver al menú principal haciendo un efecto de espera. Veamos las opciones del usuario:
+
+\begin{itemize}
+
+\item{Realizar la operación ``oferta agregada'' y visualizar el resultado. En caso de cursos iguales, se selecciona el curso con mayor beneficio (precio por hora y estudiante) y el número de estudiantes de los grupos fusionados se
+suma.} % AÑADIR En caso de nombres de cursos iguales, se añade el nombre de la compañía
+
+\item{Realizar la operación “oferta común” y visualizar el resultado. Se opera de la misma forma que en la opción anterior, seleccionando el curso de máximo beneficio en caso de haber varios iguales.}
+
+\item{Mostrar varias métricas (número medio de estudiantes por idioma, número medio de estudiantes por nivel e ingresos totales posibles), haciendo uso de la librería pandas. Para esto utilizamos el método self.show\_stats() que crea un dataframe con la información de cada academia y calcula estadísticas sobre estos.}
+
+\end{itemize}
+
+\section{Fases de desarrollo}
+
+\subsection{Fase I: Creación de la clase Course en el módulo course.py}
+
+En primer lugar, creamos la clase Course para representar cada una de los cursos. Contiene una serie de atributos comunes a todos los cursos (name, duration, enrolment, level, language, price), que inicializaremos usando el método mágico \_\_init\_\_. Siguiendo la convención de  \textit{estilo Pythonic}, definiremos métodos de acceso y modificación para los atributos, utilizando los decoradores @property y @setter.
+
+Por último redefinimos el método mágico \_\_hash\_\_(self) para obtener un identificador único para cada curso distinto y definimos también los métodos mágicos \_\_eq\_\_(self, other) y \_\_gt\_\_(self, other) para comparaciones entre objetos de la clase.
+
+\subsection{Fase II: Implementación de la clase Manager en manager.py}
+
+Una vez desarrollada la clase Film, comenzamos con la clase Manager, que se encargará de la gestión de los árboles. En esta clase incluimos los atributos y métodos necesarios para los procesos que queramos que se puedan realizar. Necesitaremos los siguientes atributos, que inicializaremos en el \_\_init\_\_:
+
+\begin{itemize}
+
+\item{academy\_a: Donde se almacenará un árbol con los cursos de la academia ``A''. Inicialmente None.}
+\item{academy\_b: Donde se almacenará un árbol con los cursos de la academia ``B''. Inicialmente None.}
+\item{common: Árbol con los cursos comunes a ambas academia. Inicialmente es un árbol vacío}
+\item{aggregate: Árbol con la oferta agregada de ambas academia. Inicialmente es un árbol vacío}
+\item{done: Lista auxiliar para mantener registro de los cálculos que ya se han realizado. Inicialmente lista vacía.}
+
+\end{itemize}
+
+Además, desarrollamos los siguientes métodos:
+\begin{itemize}
+
+\item{read\_file(self): Que permite leer el archivo, crear objetos de clase Course y almacenarlos en un árbol AVL.}
+
+\item{launch(self): Para gestionar el primer menú con el que tiene que interactuar el usuario cuando corre el programa. En este se le pide al usuario el nombre de los archivos que quiere leer.}
+
+\item{main\_menu(self): Es el menú principal del programa. Permite al usuario decidir qué quiere hacer con los datos y llama al método que permita gestionar la petición.}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% VOY POR AQUÍ %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\item{menu\_3(self): Permite al usuario seleccionar qué listado quiere mostrar y lo imprime. Para mostrar los listados tabulados se hace uso del módulo prettytable.}
+
+\end{itemize}
+
+\subsection{Fase III: Cálculo de estadísticas con pandas}
+
+Ahora queremos desarrollar un método show\_stats(self) que muestre diversas estadísticas sobre las películas.
+
+Creamos un atributo \_data en la clase Manager, que inicializamos en el \_\_init\_\_ como una lista vacía. Generamos una lista de listas con los datos de cada pelicula que tenemos en la lista posicional, con la información de cada película en el formato [film.title, film.director, film.score, film.release]. Después convertimos dicha lista a dataframe para obtener:
+
+\begin{itemize}
+
+\item{Número de películas por director/a}
+
+\item{Puntuación media por director/a}
+
+\item{Puntuación media por año de estreno}
+
+\end{itemize}
+
+\subsection{Fase IV: Análisis de tiempos}
+
+Para contrastar la posible diferencia entre la implementación del TAD Lista Posicional Ordenada con arrays y con secuencias enlazadas, se crea un fichero .csv en el que se almacenarán los tiempos de ejecución. Medimos el tiempo que se tarda en realizar una tarea concreta: leer el fichero peliculas.txt e imprimir un listado con las películas estrenadas en 2019.
+
+Para ello, se escribe en el csv para cada ejecución la implementación utilizada y el tiempo tardado (siendo tiempo final - tiempo inicio - tiempo inputs), se crea un archivo simulation.py para tener una muestra grande de ejecuciones y se procede al análisis estadístico como se detalla en el apartado 5.
+
+
+\section{Resultados y discusión}
+
+Se realizó un programa Python (main.py) que permite al usuario, a partir de un fichero de texto con datos de películas: crear un nuevo fichero ordenado y sin repetidos, imprimir listados tabulados con películas de su elección y mostrar estadísticas de las películas.
+
+No se detecta ningún error en el funcionamiento del programa tras realizar exhaustivas pruebas con el fichero de prueba peliculas.txt
+
+Tras comprobar la correcta ejecución del programa se realiza un contraste de hipótesis para comparar las medias de tiempo. Obtenemos, con ayuda del software estadístico R que las medias de tiempo de ejecución (en segundos) son las que siguen:
+
+\begin{itemize}
+\item{\textbf{Implementación con arrays: } 0.001049857}
+\item{\textbf{Implementación con secuencias enlazadas: } 0.001257752}
+\end{itemize}
+
+Luego en el contraste que planteamos la hipótesis nula establece que no hay diferencia significativa entre las medias de los dos tipos, mientras que la hipótesis alternativa sugiere que la media de tiempo utilizando secuencias enlazadas es mayor que con arrays, con un nivel de significación del 1\%.
+
+A partir de los datos recogidos en el fichero time.csv realizamos el contraste (código en el fichero analisis.R) y obtenemos que el contraste es estadísticamente significativo, ya que el p-valor es menor al nivel de significación, por lo que sí podemos aceptar la hipótesis alternativa, que es que la implementación con arrays es sensiblemente más rápida que la implementación con secuencias enlazadas.
+
+Como propuesta de mejora, creemos que podría resultar de interés realizar una nueva versión del programa main.py que realice la gestión con el tipo list y estudiar su eficiencia, ya que tras analizar detenidamente el código fuente de las listas posicionales, creemos que la gestión con el tipo list sería más rápida.
+
+Una vez analizados los resultados, podemos concluír que:
+\begin{itemize}
+\item{El programa creado permite realizar una gestión completa y eficiente de los datos (en particular, películas)}
+\item{Aunque la implementación actual se trate de una simulación con un número reducido de películas (el catálogo en España de las plataformas de streaming más populares ronda los 2.000-4.000 títulos) este programa funcionaría para una gestión real con más datos}
+\item{Tras analizar los resultados obtenidos en el análisis de tiempo, recomendaríamos la implementación con arrays frente a la de secuencias enlazadas, en vista a una mayor eficiencia.}
+\end{itemize}
+
+
+\end{document}
