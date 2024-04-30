@@ -94,9 +94,9 @@ suma.} % AÑADIR En caso de nombres de cursos iguales, se añade el nombre de la
 
 \subsection{Fase I: Creación de la clase Course en el módulo course.py}
 
-En primer lugar, creamos la clase Course para representar cada una de los cursos. Contiene una serie de atributos comunes a todos los cursos (name, duration, enrolment, level, language, price), que inicializaremos usando el método mágico \_\_init\_\_. Siguiendo la convención de  \textit{estilo Pythonic}, definiremos métodos de acceso y modificación para los atributos, utilizando los decoradores @property y @setter.
+En primer lugar, creamos la clase Course para representar cada una de los cursos. Contiene una serie de atributos comunes a todos los cursos (name, duration, enrolment, level, language, price, academy), que inicializaremos usando el método mágico \_\_init\_\_. Siguiendo la convención de  \textit{estilo Pythonic}, definiremos métodos de acceso y modificación para los atributos, utilizando los decoradores @property y @setter.
 
-Por último redefinimos el método mágico \_\_hash\_\_(self) para obtener un identificador único para cada curso distinto y definimos también los métodos mágicos \_\_eq\_\_(self, other) y \_\_gt\_\_(self, other) para comparaciones entre objetos de la clase.
+Además, redefinimos el método mágico \_\_hash\_\_(self) para obtener un identificador único para cada curso distinto y definimos también los métodos mágicos \_\_eq\_\_(self, other) y \_\_gt\_\_(self, other) para comparaciones entre objetos de la clase. 
 
 \subsection{Fase II: Implementación de la clase Manager en manager.py}
 
@@ -121,67 +121,41 @@ Además, desarrollamos los siguientes métodos:
 
 \item{main\_menu(self): Es el menú principal del programa. Permite al usuario decidir qué quiere hacer con los datos y llama al método que permita gestionar la petición.}
 
+\item{comm\_offer(self): Crea un árbol con la ``oferta común'' (los cursos ofertados en ambas academias) y lo almacena en el atributo common. Si este árbol ya había sido creado antes llama al método self.warning()}
 
+\item{agg\_offer(self): Crea un árbol con la ``oferta común'' (los cursos ofertados en ambas academias) y lo almacena en el atributo common. Si este árbol ya había sido creado antes llama al método self.warning()}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% VOY POR AQUÍ %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item{warning(self): Lanza un aviso al usuario si ya ha calculado el árbol que pide, y le pregunta si quiere volver a imprimirlo (sin calcular lo mismo de nuevo)}
 
-
-
-
-\item{menu\_3(self): Permite al usuario seleccionar qué listado quiere mostrar y lo imprime. Para mostrar los listados tabulados se hace uso del módulo prettytable.}
+\item{back\_main(self): Vuelve al menú principal con esperas, simulando una pantalla de carga}
 
 \end{itemize}
+
+Por último, creamos un archivo main.py en el que se crea un objeto de la clase Manager y se le aplica el método self.launch(), para comenzar el programa.
+
+\newpage
 
 \subsection{Fase III: Cálculo de estadísticas con pandas}
 
-Ahora queremos desarrollar un método show\_stats(self) que muestre diversas estadísticas sobre las películas.
+Ahora queremos desarrollar un método show\_stats(self) que muestre diversas estadísticas sobre las academias.
 
-Creamos un atributo \_data en la clase Manager, que inicializamos en el \_\_init\_\_ como una lista vacía. Generamos una lista de listas con los datos de cada pelicula que tenemos en la lista posicional, con la información de cada película en el formato [film.title, film.director, film.score, film.release]. Después convertimos dicha lista a dataframe para obtener:
+Creamos variables data\_a y data\_b para almacenar listas con datos de los cursos de las academias A y B, respectivamente. Después convertimos dichas listas a dataframe para obtener:
 
 \begin{itemize}
 
-\item{Número de películas por director/a}
+\item{Número medio de estudiantes por idioma}
 
-\item{Puntuación media por director/a}
+\item{Número medio de estudiantes por nivel}
 
-\item{Puntuación media por año de estreno}
+\item{Ingresos totales posibles}
 
 \end{itemize}
-
-\subsection{Fase IV: Análisis de tiempos}
-
-Para contrastar la posible diferencia entre la implementación del TAD Lista Posicional Ordenada con arrays y con secuencias enlazadas, se crea un fichero .csv en el que se almacenarán los tiempos de ejecución. Medimos el tiempo que se tarda en realizar una tarea concreta: leer el fichero peliculas.txt e imprimir un listado con las películas estrenadas en 2019.
-
-Para ello, se escribe en el csv para cada ejecución la implementación utilizada y el tiempo tardado (siendo tiempo final - tiempo inicio - tiempo inputs), se crea un archivo simulation.py para tener una muestra grande de ejecuciones y se procede al análisis estadístico como se detalla en el apartado 5.
 
 
 \section{Resultados y discusión}
 
-Se realizó un programa Python (main.py) que permite al usuario, a partir de un fichero de texto con datos de películas: crear un nuevo fichero ordenado y sin repetidos, imprimir listados tabulados con películas de su elección y mostrar estadísticas de las películas.
+Se realizó un programa Python (main.py) que permite al usuario, a partir de dos ficheros de texto con datos de academias: almacenar los datos en árboles AVL, crear árboles con la oferta agregada y la oferta común y mostrar estadísticas de las academias.
 
-No se detecta ningún error en el funcionamiento del programa tras realizar exhaustivas pruebas con el fichero de prueba peliculas.txt
-
-Tras comprobar la correcta ejecución del programa se realiza un contraste de hipótesis para comparar las medias de tiempo. Obtenemos, con ayuda del software estadístico R que las medias de tiempo de ejecución (en segundos) son las que siguen:
-
-\begin{itemize}
-\item{\textbf{Implementación con arrays: } 0.001049857}
-\item{\textbf{Implementación con secuencias enlazadas: } 0.001257752}
-\end{itemize}
-
-Luego en el contraste que planteamos la hipótesis nula establece que no hay diferencia significativa entre las medias de los dos tipos, mientras que la hipótesis alternativa sugiere que la media de tiempo utilizando secuencias enlazadas es mayor que con arrays, con un nivel de significación del 1\%.
-
-A partir de los datos recogidos en el fichero time.csv realizamos el contraste (código en el fichero analisis.R) y obtenemos que el contraste es estadísticamente significativo, ya que el p-valor es menor al nivel de significación, por lo que sí podemos aceptar la hipótesis alternativa, que es que la implementación con arrays es sensiblemente más rápida que la implementación con secuencias enlazadas.
-
-Como propuesta de mejora, creemos que podría resultar de interés realizar una nueva versión del programa main.py que realice la gestión con el tipo list y estudiar su eficiencia, ya que tras analizar detenidamente el código fuente de las listas posicionales, creemos que la gestión con el tipo list sería más rápida.
-
-Una vez analizados los resultados, podemos concluír que:
-\begin{itemize}
-\item{El programa creado permite realizar una gestión completa y eficiente de los datos (en particular, películas)}
-\item{Aunque la implementación actual se trate de una simulación con un número reducido de películas (el catálogo en España de las plataformas de streaming más populares ronda los 2.000-4.000 títulos) este programa funcionaría para una gestión real con más datos}
-\item{Tras analizar los resultados obtenidos en el análisis de tiempo, recomendaríamos la implementación con arrays frente a la de secuencias enlazadas, en vista a una mayor eficiencia.}
-\end{itemize}
-
+No se detecta ningún error en el funcionamiento del programa tras realizar exhaustivas pruebas con ficheros de prueba creados, de entre 1 y 2000 cursos, con y sin repetidos.
 
 \end{document}

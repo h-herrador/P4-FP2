@@ -1,0 +1,2 @@
+#nombre,duracion,participantes,level,language,precio
+Rust,60,10,A,Cas,15.00

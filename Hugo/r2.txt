@@ -1,0 +1,3 @@
+#nombre,duracion,participantes,level,language,precio
+Rust,60,12,A,Cas,14.00
+Python,24,3,D,Fre,23.54

@@ -1,11 +1,62 @@
 class Course:
+    """Represents a course with its attributes and methods
+    
+    Attributes
+    ----------
+    name: str
+        Name of the course
+    
+    duration: int
+        Number of hours the course takes
+
+    enrolment: int
+        Number of students enrolled in the course
+    
+    level: str
+        Level of the course
+    
+    language: str
+        Language studied in the course
+
+    price: float
+        Price per hour and student
+    
+    academy: None or str
+        Used to desambiguate which academy the course comes from, if necessary
+
+    Methods
+    -------
+    None
+    """
     def __init__(self, name, duration, enrolment, level, language, price):
+        """ Initializes a course object with its attributes
+        Attributes
+        ----------
+        name: str
+        Name of the course
+    
+        duration: int
+            Number of hours the course takes
+
+        enrolment: int
+            Number of students enrolled in the course
+
+        level: str
+            Level of the course
+
+        language: str
+            Language studied in the course
+
+        price: float
+            Price per hour and student
+        """
         self.name = name
         self.duration = duration
         self.enrolment = enrolment
         self.level = level
         self.language = language
         self.price = price
+        self.academy = None
 
     def __eq__(self, other: "Course"):
         return self.name == other.name and self.level == other.level and self.language == other.language
@@ -14,7 +65,14 @@ class Course:
         return self.price * self.enrolment * self.duration > other.price * other.enrolment * other.duration
     
     def __hash__(self):
-        return hash((self.name, self.level, self.language, self.duration, self.price))
+        return hash((self.name, self.level, self.language))
+    
+    def __str__(self):
+        if not self.academy:
+            return f"{self.name}, {self.level}, {self.language}, {self.duration}, {self.price}"
+        
+        else:
+            return f"{self.name}, {self.level}, {self.language}, {self.duration}, {self.price} (from Academy {self.academy})"
 
     
     
@@ -81,8 +139,11 @@ class Course:
             if price >= 0:
                 self._price = price
 
-
-
+    @property
+    def academy(self):
+        return self._academy
     
-
-    
+    @academy.setter
+    def academy(self, academy):
+        if academy in (None, "A", "B"):
+            self._academy = academy
