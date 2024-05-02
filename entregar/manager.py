@@ -1,3 +1,12 @@
+"""
+Created by:
+Hugo Herrador Segade h.herrador@udc.es
+Pablo Montes Aldao pablomontes1@udc.es
+
+Work licensed under a GPL 3.0 License (see LICENSE file)
+"""
+
+
 import sys
 from avl_tree import *
 from binary_search_tree import *

@@ -154,7 +154,9 @@ Creamos variables data\_a y data\_b para almacenar listas con datos de los curso
 
 \section{Resultados y discusión}
 
-Se realizó un programa Python (main.py) que permite al usuario, a partir de dos ficheros de texto con datos de academias: almacenar los datos en árboles AVL, crear árboles con la oferta agregada y la oferta común y mostrar estadísticas de las academias.
+Se realizó un programa Python que permite al usuario, a partir de dos ficheros de texto con datos de academias: almacenar los datos en árboles AVL, crear árboles con la oferta agregada y la oferta común y mostrar estadísticas de las academias.
+
+El menú es intuitivo, amigable con el usuario y trata los errores que pueden suceder en la ejecución, lanzando mensajes explicativos cuando es necesario.
 
 No se detecta ningún error en el funcionamiento del programa tras realizar exhaustivas pruebas con ficheros de prueba creados, de entre 1 y 2000 cursos, con y sin repetidos.
 
